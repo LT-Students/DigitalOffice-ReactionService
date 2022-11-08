@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="$(ProjectDir)..\..\Common.Configurations.targets" />
+
+  <ItemGroup>
+    <ProjectReference Include="..\ReactionService.Broker\ReactionService.Broker.csproj" />
+    <ProjectReference Include="..\ReactionService.Data\ReactionService.Data.csproj" />
+    <ProjectReference Include="..\ReactionService.Mappers\ReactionService.Mappers.csproj" />
+    <ProjectReference Include="..\ReactionService.Validation\ReactionService.Validation.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Commands\" />
+  </ItemGroup>
+
+</Project>
