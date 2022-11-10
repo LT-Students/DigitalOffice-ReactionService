@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="$(ProjectDir)..\..\Common.Configurations.targets" />
+
+  <ItemGroup>
+    <ProjectReference Include="..\ReactionService.Data\ReactionService.Data.csproj" />
+    <ProjectReference Include="..\ReactionService.Models.Dto\ReactionService.Models.Dto.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="ReactionsGroups\" />
+    <Folder Include="Reactions\" />
+  </ItemGroup>
+
+</Project>

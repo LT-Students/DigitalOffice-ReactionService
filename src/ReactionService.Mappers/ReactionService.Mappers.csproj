@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="$(ProjectDir)..\..\Common.Configurations.targets" />
+
+  <ItemGroup>
+    <ProjectReference Include="..\ReactionService.Models.Db\ReactionService.Models.Db.csproj" />
+    <ProjectReference Include="..\ReactionService.Models.Dto\ReactionService.Models.Dto.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Db\Interfaces\" />
+    <Folder Include="Models\Interfaces\" />
+    <Folder Include="Responses\Interfaces\" />
+  </ItemGroup>
+
+</Project>
