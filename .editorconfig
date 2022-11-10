@@ -122,3 +122,8 @@ dotnet_style_qualification_for_property = false:suggestion
 [*.{cs,vb}]
 tab_width=2
 indent_size=2
+
+[*.{csproj,sln}]
+indent_style = space
+indent_size=2
+tab_width=2
