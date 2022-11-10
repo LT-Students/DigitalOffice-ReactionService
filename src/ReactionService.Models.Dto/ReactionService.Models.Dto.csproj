@@ -3,11 +3,11 @@
   <Import Project="$(ProjectDir)..\..\Common.Configurations.targets" />
 
   <ItemGroup>
-	<PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
   </ItemGroup>
 
   <ItemGroup>
-	<ProjectReference Include="..\ReactionService.Models.Db\ReactionService.Models.Db.csproj" />
+    <ProjectReference Include="..\ReactionService.Models.Db\ReactionService.Models.Db.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -15,5 +15,5 @@
     <Folder Include="Requests\" />
     <Folder Include="Responses\" />
   </ItemGroup>
-	
+    
 </Project>

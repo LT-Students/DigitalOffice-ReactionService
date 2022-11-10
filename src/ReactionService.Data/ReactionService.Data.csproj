@@ -3,8 +3,8 @@
   <Import Project="$(ProjectDir)..\..\Common.Configurations.targets" />
 
   <ItemGroup>
-	<ProjectReference Include="..\ReactionService.Data.Provider.MsSql.Ef\ReactionService.Data.Provider.MsSql.Ef.csproj" />
-	<ProjectReference Include="..\ReactionService.Models.Db\ReactionService.Models.Db.csproj" />
+    <ProjectReference Include="..\ReactionService.Data.Provider.MsSql.Ef\ReactionService.Data.Provider.MsSql.Ef.csproj" />
+    <ProjectReference Include="..\ReactionService.Models.Db\ReactionService.Models.Db.csproj" />
     <ProjectReference Include="..\ReactionService.Models.Dto\ReactionService.Models.Dto.csproj" />
   </ItemGroup>
 
