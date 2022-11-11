@@ -1,4 +1,5 @@
 ﻿using LT.DigitalOffice.Kernel.EFSupport.Provider;
+using LT.DigitalOffice.ReactionService.Models.Db;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -7,6 +8,9 @@ namespace LT.DigitalOffice.ReactionService.Data.Provider.MsSql.Ef;
 
 public class ReactionServiceDbContext : DbContext, IDataProvider
 {
+  public DbSet<DbReaction> Reactions { get; set; }
+  public DbSet<DbReactionsGroup> ReactionsGroups { get; set; }
+
   public ReactionServiceDbContext(DbContextOptions<ReactionServiceDbContext> options)
     : base(options)
   {
