@@ -7,8 +7,4 @@
     <ProjectReference Include="..\ReactionService.Models.Dto\ReactionService.Models.Dto.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Migrations\" />
-  </ItemGroup>
-
 </Project>
