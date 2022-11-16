@@ -18,6 +18,6 @@ public class ReactionsGroupRepository : IReactionsGroupRepository
 
   public Task<bool> DoesExistAsync(Guid reactionsGroupId)
   {
-    return _provider.ReactionsGroups.AnyAsync(x => x.Id == reactionsGroupId);
+    return _provider.ReactionsGroups.AsNoTracking().AnyAsync(x => x.Id == reactionsGroupId);
   }
 }
