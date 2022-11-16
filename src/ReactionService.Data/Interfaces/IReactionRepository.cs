@@ -9,5 +9,6 @@ namespace LT.DigitalOffice.ReactionService.Data.Interfaces;
 public interface IReactionRepository
 {
   Task<Guid?> CreateAsync(DbReaction dbReaction);
+
   Task<bool> DoesNameExist(string name);
 }

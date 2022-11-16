@@ -19,13 +19,11 @@ public class DbReactionMapper : IDbReactionMapper
 
   public DbReaction Map(CreateReactionRequest request, Guid imageId)
   {
-    Guid reactionId = Guid.NewGuid();
-
     return request is null
       ? null
       : new DbReaction
       {
-        Id = reactionId,
+        Id = Guid.NewGuid(),
         Name = request.Name,
         Unicode = request.Unicode,
         ReactionsGroupId = request.ReactionsGroupId,

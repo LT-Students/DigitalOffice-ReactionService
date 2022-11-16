@@ -34,15 +34,19 @@ public class ImageService : IImageService
 
   public async Task<Guid?> CreateImageAsync(CreateReactionRequest request, List<string> errors)
   {
+    CreateImageData imageData = new(request.Name, request.Content, request.Extension);
+
+    object imageRequest = ICreateImagesRequest.CreateObj(
+      new() { imageData },
+      ImageSource.Reaction,
+      _httpContextAccessor.HttpContext.GetUserId());
+
     return request is null
       ? null
       : (await _rcCreateImages.ProcessRequest<ICreateImagesRequest, ICreateImagesResponse>(
-        ICreateImagesRequest.CreateObj(
-          new() { new CreateImageData(request.Name, request.Content, request.Extension) },
-          ImageSource.Reaction,
-          _httpContextAccessor.HttpContext.GetUserId()),
+        imageRequest,
         errors,
         _logger))
-        ?.ImagesIds?.FirstOrDefault();
+          ?.ImagesIds?.FirstOrDefault();
   }
 }

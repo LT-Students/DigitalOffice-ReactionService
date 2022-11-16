@@ -55,7 +55,7 @@ public class CreateReactionCommand : ICreateReactionCommand
 
   public async Task<OperationResultResponse<Guid?>> ExecuteAsync(CreateReactionRequest request)
   {
-    if (!await _accessValidator.IsAdminAsync(_httpContextAccessor.HttpContext.GetUserId()))
+    if (!(await _accessValidator.IsAdminAsync(_httpContextAccessor.HttpContext.GetUserId())))
     {
       return _responseCreator.CreateFailureResponse<Guid?>(HttpStatusCode.Forbidden);
     }
@@ -69,15 +69,31 @@ public class CreateReactionCommand : ICreateReactionCommand
         validationResult.Errors.Select(x => x.ErrorMessage).ToList());
     }
 
-    (bool isCompressSuccess, request.Content, request.Extension) = await _imageCompressHelper.CompressAsync(request.Content, request.Extension, 256);
-    (bool isResizeSuccess, request.Content, request.Extension) = await _imageResizeHelper.ResizeAsync(request.Content, request.Extension, 24);
+    OperationResultResponse<Guid?> response = new();
 
-    if (!(isCompressSuccess && isResizeSuccess))
+    (bool isResizeSuccess, string imageContent, request.Extension) = await _imageResizeHelper.ResizeAsync(request.Content, request.Extension, 24);
+
+    if (!isResizeSuccess)
     {
-      return _responseCreator.CreateFailureResponse<Guid?>(HttpStatusCode.BadRequest);
+      response.Errors.Add("Resize operation have been failed");
     }
 
-    OperationResultResponse<Guid?> response = new();
+    if ((imageContent is not null) && (Convert.FromBase64String(imageContent).Length / 1000 > 10))
+    {
+      (bool isCompressSuccess, imageContent, request.Extension) = await _imageCompressHelper.CompressAsync(request.Content, request.Extension, 10);
+
+      if (!isCompressSuccess)
+      {
+        response.Errors.Add("Compress operation have been failed");
+      }
+    }
+
+    if (imageContent is null)
+    {
+      return _responseCreator.CreateFailureResponse<Guid?>(HttpStatusCode.BadRequest, response.Errors);
+    }
+
+    request.Content = imageContent;
 
     Guid? imageId = await _imageService.CreateImageAsync(request, response.Errors);
 
@@ -86,7 +102,7 @@ public class CreateReactionCommand : ICreateReactionCommand
       return _responseCreator.CreateFailureResponse<Guid?>(HttpStatusCode.BadRequest);
     }
 
-    response.Body = await _reactionRepository.CreateAsync(_mapper.Map(request, (Guid)imageId));
+    response.Body = await _reactionRepository.CreateAsync(_mapper.Map(request, imageId.Value));
 
     if (response.Body is null)
     {
