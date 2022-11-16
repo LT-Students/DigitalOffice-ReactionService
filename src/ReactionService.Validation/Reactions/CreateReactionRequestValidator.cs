@@ -40,13 +40,13 @@ public class CreateReactionRequestValidator : AbstractValidator<CreateReactionRe
 
     RuleFor(r => r.Extension)
       .Must(x => ImmutableList.Create(
-        ImageFormats.jpg, 
-        ImageFormats.jpeg, 
-        ImageFormats.png, 
-        ImageFormats.svg, 
-        ImageFormats.gif, 
-        ImageFormats.webp)
-          .Contains(x))
+          ImageFormats.jpg,
+          ImageFormats.jpeg,
+          ImageFormats.png,
+          ImageFormats.svg,
+          ImageFormats.gif,
+          ImageFormats.webp)
+        .Contains(x))
       .WithMessage("Wrong image extension.");
   }
 }
