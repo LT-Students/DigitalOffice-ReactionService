@@ -88,12 +88,10 @@ public class CreateReactionCommand : ICreateReactionCommand
       }
     }
 
-    if (imageContent is null)
+    if (imageContent is not null)
     {
-      return _responseCreator.CreateFailureResponse<Guid?>(HttpStatusCode.BadRequest, response.Errors);
+      request.Content = imageContent;
     }
-
-    request.Content = imageContent;
 
     Guid? imageId = await _imageService.CreateImageAsync(request, response.Errors);
 
