@@ -76,11 +76,16 @@ public class CreateReactionCommand : ICreateReactionCommand
     if (!isResizeSuccess)
     {
       response.Errors.Add("Resize operation have been failed");
+
+      if (Convert.FromBase64String(request.Content).Length / 1000 > 10)
+      {
+        (bool isCompressSuccess, imageContent, request.Extension) = await _imageCompressHelper.CompressAsync(request.Content, request.Extension, 10);
+      }
     }
 
     if ((imageContent is not null) && (Convert.FromBase64String(imageContent).Length / 1000 > 10))
     {
-      (bool isCompressSuccess, imageContent, request.Extension) = await _imageCompressHelper.CompressAsync(request.Content, request.Extension, 10);
+      (bool isCompressSuccess, imageContent, request.Extension) = await _imageCompressHelper.CompressAsync(imageContent, request.Extension, 10);
 
       if (!isCompressSuccess)
       {
