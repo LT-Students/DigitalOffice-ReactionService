@@ -16,8 +16,7 @@ public class CreateReactionRequestValidator : AbstractValidator<CreateReactionRe
   public CreateReactionRequestValidator(
     IReactionRepository reactionRepository,
     IReactionsGroupRepository reactionsGroupRepository,
-    IImageContentValidator imageContentValidator,
-    IImageExtensionValidator imageExtensionValidator)
+    IImageContentValidator imageContentValidator)
   {
     RuleFor(r => r.Name)
       .MaximumLength(20)
