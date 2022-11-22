@@ -107,6 +107,11 @@ public class CreateReactionCommand : ICreateReactionCommand
 
     response.Body = await _reactionRepository.CreateAsync(_mapper.Map(request, imageId.Value));
 
+    if (response.Body is null)
+    {
+      return _responseCreator.CreateFailureResponse<Guid?>(HttpStatusCode.BadRequest);
+    }
+
     _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.Created;
 
     return response;
