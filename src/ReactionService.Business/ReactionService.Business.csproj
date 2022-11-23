@@ -9,8 +9,4 @@
     <ProjectReference Include="..\ReactionService.Validation\ReactionService.Validation.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Commands\" />
-  </ItemGroup>
-
 </Project>

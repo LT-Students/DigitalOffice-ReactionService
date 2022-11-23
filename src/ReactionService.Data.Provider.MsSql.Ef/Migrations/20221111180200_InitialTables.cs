@@ -17,7 +17,7 @@ public class InitialTables : Migration
       {
         Id = table.Column<Guid>(nullable: false),
         Name = table.Column<string>(nullable: false),
-        Unicode = table.Column<string>(nullable: false),
+        Unicode = table.Column<string>(nullable: true),
         ReactionsGroupId = table.Column<Guid>(nullable: false),
         ImageId = table.Column<Guid>(nullable: false),
         IsActive = table.Column<bool>(nullable: false),
