@@ -8,5 +8,7 @@ namespace LT.DigitalOffice.ReactionService.Mappers.Db.Interfaces;
 [AutoInject]
 public interface IDbReactionMapper
 {
+  DbReaction Map(CreateSingleReactionRequest request, Guid imageId);
+
   DbReaction Map(CreateReactionRequest request, Guid imageId);
 }
