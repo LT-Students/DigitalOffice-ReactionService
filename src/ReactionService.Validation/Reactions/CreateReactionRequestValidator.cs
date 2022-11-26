@@ -1,8 +1,10 @@
 ﻿using FluentValidation;
+using LT.DigitalOffice.Kernel.Constants;
+using LT.DigitalOffice.Kernel.Validators.Interfaces;
 using LT.DigitalOffice.ReactionService.Data.Interfaces;
 using LT.DigitalOffice.ReactionService.Models.Dto.Requests;
-using LT.DigitalOffice.ReactionService.Validation.Image.Interfaces;
 using LT.DigitalOffice.ReactionService.Validation.Reactions.Interfaces;
+using System.Collections.Immutable;
 using System.Text.RegularExpressions;
 
 namespace LT.DigitalOffice.ReactionService.Validation.Reactions;
@@ -13,7 +15,7 @@ public class CreateReactionRequestValidator : AbstractValidator<CreateReactionRe
 
   public CreateReactionRequestValidator(
     IReactionRepository reactionRepository,
-    IImageValidator imageValidator)
+    IImageContentValidator imageContentValidator)
   {
     RuleFor(r => r.Name)
       .MaximumLength(20)
@@ -27,7 +29,18 @@ public class CreateReactionRequestValidator : AbstractValidator<CreateReactionRe
       .MinimumLength(7)
       .WithMessage("Unicode is too short.");
 
-    RuleFor(r => r.Image)
-      .SetValidator(imageValidator);
+    RuleFor(r => r.Content)
+      .SetValidator(imageContentValidator);
+
+    RuleFor(r => r.Extension)
+      .Must(x => ImmutableList.Create(
+          ImageFormats.jpg,
+          ImageFormats.jpeg,
+          ImageFormats.png,
+          ImageFormats.svg,
+          ImageFormats.gif,
+          ImageFormats.webp)
+        .Contains(x))
+      .WithMessage("Wrong image extension.");
   }
 }

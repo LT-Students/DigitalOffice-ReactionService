@@ -71,21 +71,32 @@ public class CreateReactionCommand : ICreateReactionCommand
 
     OperationResultResponse<Guid?> response = new();
 
-    (bool isResizeSuccess, string imageContent, request.Image.Extension) = await _imageResizeHelper.ResizeAsync(request.Image.Content, request.Image.Extension, 24);
+    // 24 px
+    (bool isResizeSuccess, string imageContent, string extension) =
+      await _imageResizeHelper.ResizeAsync(request.Content, request.Extension, 24);
 
     if (!isResizeSuccess)
     {
       response.Errors.Add("Resize operation have been failed");
+    }
 
-      if (Convert.FromBase64String(request.Image.Content).Length / 1000 > 10)
+    // 10 Kb
+    if ((imageContent is not null) && (Convert.FromBase64String(imageContent).Length / 1000 > 10))
+    {
+      (bool isCompressSuccess, imageContent, extension) =
+        await _imageCompressHelper.CompressAsync(imageContent, extension, 10);
+
+      if (!isCompressSuccess)
       {
-        (bool isCompressSuccess, imageContent, request.Image.Extension) = await _imageCompressHelper.CompressAsync(request.Image.Content, request.Image.Extension, 10);
+        response.Errors.Add("Compress operation have been failed");
       }
     }
 
-    if ((imageContent is not null) && (Convert.FromBase64String(imageContent).Length / 1000 > 10))
+    // 10 Kb
+    if ((imageContent is null) && (Convert.FromBase64String(request.Content).Length / 1000 > 10))
     {
-      (bool isCompressSuccess, imageContent, request.Image.Extension) = await _imageCompressHelper.CompressAsync(imageContent, request.Image.Extension, 10);
+      (bool isCompressSuccess, imageContent, extension) =
+        await _imageCompressHelper.CompressAsync(request.Content, request.Extension, 10);
 
       if (!isCompressSuccess)
       {
@@ -95,10 +106,11 @@ public class CreateReactionCommand : ICreateReactionCommand
 
     if (imageContent is not null)
     {
-      request.Image.Content = imageContent;
+      request.Content = imageContent;
+      request.Extension = extension;
     }
 
-    Guid? imageId = await _imageService.CreateImageAsync(request.Image, response.Errors);
+    Guid? imageId = await _imageService.CreateImageAsync(request.Name, request.Content, request.Extension, response.Errors);
 
     if (imageId is null)
     {

@@ -1,5 +1,4 @@
-﻿using LT.DigitalOffice.ReactionService.Models.Dto.Models;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace LT.DigitalOffice.ReactionService.Models.Dto.Requests;
 
@@ -9,5 +8,7 @@ public record CreateReactionRequest
   public string Name { get; set; }
   public string Unicode { get; set; }
   [Required]
-  public ImageContent Image { get; set; }
+  public string Content { get; set; }
+  [Required]
+  public string Extension { get; set; }
 }

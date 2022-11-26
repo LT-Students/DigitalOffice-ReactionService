@@ -81,21 +81,32 @@ public class CreateReactionsGroupCommand : ICreateReactionsGroupCommand
 
     foreach (CreateReactionRequest reaction in request.Reactions)
     {
-      (bool isResizeSuccess, string imageContent, reaction.Image.Extension) = await _imageResizeHelper.ResizeAsync(reaction.Image.Content, reaction.Image.Extension, 24);
+      // 24 px
+      (bool isResizeSuccess, string imageContent, string extension) =
+        await _imageResizeHelper.ResizeAsync(reaction.Content, reaction.Extension, 24);
 
       if (!isResizeSuccess)
       {
         response.Errors.Add("Resize operation have been failed");
+      }
 
-        if (Convert.FromBase64String(reaction.Image.Content).Length / 1000 > 10)
+      // 10 Kb
+      if ((imageContent is not null) && (Convert.FromBase64String(imageContent).Length / 1000 > 10))
+      {
+        (bool isCompressSuccess, imageContent, extension) =
+          await _imageCompressHelper.CompressAsync(imageContent, extension, 10);
+
+        if (!isCompressSuccess)
         {
-          (bool isCompressSuccess, imageContent, reaction.Image.Extension) = await _imageCompressHelper.CompressAsync(reaction.Image.Content, reaction.Image.Extension, 10);
+          response.Errors.Add("Compress operation have been failed");
         }
       }
 
-      if ((imageContent is not null) && (Convert.FromBase64String(imageContent).Length / 1000 > 10))
+      // 10 Kb
+      if ((imageContent is null) && (Convert.FromBase64String(reaction.Content).Length / 1000 > 10))
       {
-        (bool isCompressSuccess, imageContent, reaction.Image.Extension) = await _imageCompressHelper.CompressAsync(imageContent, reaction.Image.Extension, 10);
+        (bool isCompressSuccess, imageContent, extension) =
+          await _imageCompressHelper.CompressAsync(reaction.Content, reaction.Extension, 10);
 
         if (!isCompressSuccess)
         {
@@ -105,12 +116,11 @@ public class CreateReactionsGroupCommand : ICreateReactionsGroupCommand
 
       if (imageContent is not null)
       {
-        reaction.Image.Content = imageContent;
+        reaction.Content = imageContent;
+        reaction.Extension = extension;
       }
 
-      reaction.Image.Name = reaction.Name;
-
-      Guid? imageId = await _imageService.CreateImageAsync(reaction.Image, response.Errors);
+      Guid? imageId = await _imageService.CreateImageAsync(reaction.Name, reaction.Content, reaction.Extension, response.Errors);
 
       if (imageId is null)
       {

@@ -5,7 +5,6 @@ using LT.DigitalOffice.Models.Broker.Models.Image;
 using LT.DigitalOffice.Models.Broker.Requests.Image;
 using LT.DigitalOffice.Models.Broker.Responses.Image;
 using LT.DigitalOffice.ReactionService.Broker.Requests.Interfaces;
-using LT.DigitalOffice.ReactionService.Models.Dto.Models;
 using MassTransit;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
@@ -32,13 +31,13 @@ public class ImageService : IImageService
     _logger = logger;
   }
 
-  public async Task<Guid?> CreateImageAsync(ImageContent image, List<string> errors)
+  public async Task<Guid?> CreateImageAsync(string name, string content, string extension, List<string> errors)
   {
-    return image is null
+    return name is null || content is null || extension is null
       ? null
       : (await _rcCreateImages.ProcessRequest<ICreateImagesRequest, ICreateImagesResponse>(
         ICreateImagesRequest.CreateObj(
-          new() { new CreateImageData(image.Name, image.Content, image.Extension) },
+          new() { new CreateImageData(name, content, extension) },
           ImageSource.Reaction,
           _httpContextAccessor.HttpContext.GetUserId()),
         errors,
