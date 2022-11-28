@@ -22,7 +22,7 @@ public class ReactionsGroupRepository : IReactionsGroupRepository
   private IQueryable<DbReactionsGroup> CreateGetPredicates(
     GetReactionsGroupFilter filter)
   {
-    IQueryable<DbReactionsGroup> query = _provider.ReactionsGroups.AsQueryable();
+    IQueryable<DbReactionsGroup> query = _provider.ReactionsGroups.AsNoTracking().AsQueryable();
 
     if (!filter.IncludeDeactivated)
     {
@@ -59,11 +59,11 @@ public class ReactionsGroupRepository : IReactionsGroupRepository
 
   public Task<bool> DoesNameExist(string name)
   {
-    return _provider.ReactionsGroups.AsNoTracking().AnyAsync(x => x.Name == name);
+    return _provider.ReactionsGroups.AnyAsync(x => x.Name == name);
   }
 
   public Task<bool> DoesExistAsync(Guid reactionsGroupId)
   {
-    return _provider.ReactionsGroups.AsNoTracking().AnyAsync(x => x.Id == reactionsGroupId);
+    return _provider.ReactionsGroups.AnyAsync(x => x.Id == reactionsGroupId);
   }
 }
