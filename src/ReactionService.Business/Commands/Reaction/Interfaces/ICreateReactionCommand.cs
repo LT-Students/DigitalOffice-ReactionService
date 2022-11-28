@@ -9,5 +9,5 @@ namespace LT.DigitalOffice.ReactionService.Business.Commands.Reaction.Interfaces
 [AutoInject]
 public interface ICreateReactionCommand
 {
-  Task<OperationResultResponse<Guid?>> ExecuteAsync(CreateReactionRequest request);
+  Task<OperationResultResponse<Guid?>> ExecuteAsync(CreateSingleReactionRequest request);
 }

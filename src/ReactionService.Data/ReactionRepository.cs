@@ -32,6 +32,6 @@ public class ReactionRepository : IReactionRepository
 
   public Task<bool> DoesNameExist(string name)
   {
-    return _provider.Reactions.AsNoTracking().AnyAsync(x => x.Name == name);
+    return _provider.Reactions.AnyAsync(x => x.Name == name);
   }
 }

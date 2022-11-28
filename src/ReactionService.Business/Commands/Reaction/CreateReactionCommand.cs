@@ -21,7 +21,7 @@ namespace LT.DigitalOffice.ReactionService.Business.Commands.Reaction;
 
 public class CreateReactionCommand : ICreateReactionCommand
 {
-  private readonly ICreateReactionRequestValidator _validator;
+  private readonly ICreateSingleReactionRequestValidator _validator;
   private readonly IResponseCreator _responseCreator;
   private readonly IAccessValidator _accessValidator;
   private readonly IReactionRepository _reactionRepository;
@@ -32,7 +32,7 @@ public class CreateReactionCommand : ICreateReactionCommand
   private readonly IImageResizeHelper _imageResizeHelper;
 
   public CreateReactionCommand(
-    ICreateReactionRequestValidator validator,
+    ICreateSingleReactionRequestValidator validator,
     IResponseCreator responseCreator,
     IAccessValidator accessValidator,
     IReactionRepository reactionRepository,
@@ -53,7 +53,7 @@ public class CreateReactionCommand : ICreateReactionCommand
     _imageResizeHelper = imageResizeHelper;
   }
 
-  public async Task<OperationResultResponse<Guid?>> ExecuteAsync(CreateReactionRequest request)
+  public async Task<OperationResultResponse<Guid?>> ExecuteAsync(CreateSingleReactionRequest request)
   {
     if (!(await _accessValidator.IsAdminAsync(_httpContextAccessor.HttpContext.GetUserId())))
     {
@@ -71,21 +71,32 @@ public class CreateReactionCommand : ICreateReactionCommand
 
     OperationResultResponse<Guid?> response = new();
 
-    (bool isResizeSuccess, string imageContent, request.Extension) = await _imageResizeHelper.ResizeAsync(request.Content, request.Extension, 24);
+    // 24 px
+    (bool isResizeSuccess, string imageContent, string extension) =
+      await _imageResizeHelper.ResizeAsync(request.Content, request.Extension, 24);
 
     if (!isResizeSuccess)
     {
       response.Errors.Add("Resize operation have been failed");
+    }
 
-      if (Convert.FromBase64String(request.Content).Length / 1000 > 10)
+    // 10 Kb
+    if ((imageContent is not null) && (Convert.FromBase64String(imageContent).Length / 1000 > 10))
+    {
+      (bool isCompressSuccess, imageContent, extension) =
+        await _imageCompressHelper.CompressAsync(imageContent, extension, 10);
+
+      if (!isCompressSuccess)
       {
-        (bool isCompressSuccess, imageContent, request.Extension) = await _imageCompressHelper.CompressAsync(request.Content, request.Extension, 10);
+        response.Errors.Add("Compress operation have been failed");
       }
     }
 
-    if ((imageContent is not null) && (Convert.FromBase64String(imageContent).Length / 1000 > 10))
+    // 10 Kb
+    if ((imageContent is null) && (Convert.FromBase64String(request.Content).Length / 1000 > 10))
     {
-      (bool isCompressSuccess, imageContent, request.Extension) = await _imageCompressHelper.CompressAsync(imageContent, request.Extension, 10);
+      (bool isCompressSuccess, imageContent, extension) =
+        await _imageCompressHelper.CompressAsync(request.Content, request.Extension, 10);
 
       if (!isCompressSuccess)
       {
@@ -96,9 +107,10 @@ public class CreateReactionCommand : ICreateReactionCommand
     if (imageContent is not null)
     {
       request.Content = imageContent;
+      request.Extension = extension;
     }
 
-    Guid? imageId = await _imageService.CreateImageAsync(request, response.Errors);
+    Guid? imageId = await _imageService.CreateImageAsync(request.Name, request.Content, request.Extension, response.Errors);
 
     if (imageId is null)
     {

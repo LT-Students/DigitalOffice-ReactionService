@@ -15,7 +15,6 @@ public class CreateReactionRequestValidator : AbstractValidator<CreateReactionRe
 
   public CreateReactionRequestValidator(
     IReactionRepository reactionRepository,
-    IReactionsGroupRepository reactionsGroupRepository,
     IImageContentValidator imageContentValidator)
   {
     RuleFor(r => r.Name)
@@ -23,16 +22,12 @@ public class CreateReactionRequestValidator : AbstractValidator<CreateReactionRe
       .WithMessage("Name is too long.")
       .Must(x => _nameRegex.IsMatch(x.Trim()))
       .WithMessage("Name contains invalid characters.")
-      .MustAsync(async(x, _) => !await reactionRepository.DoesNameExist(x))
+      .MustAsync(async (x, _) => !await reactionRepository.DoesNameExist(x))
       .WithMessage("Reaction with this name already exists.");
 
     RuleFor(r => r.Unicode)
       .MinimumLength(7)
       .WithMessage("Unicode is too short.");
-
-    RuleFor(r => r.ReactionsGroupId)
-      .MustAsync(async (x, _) => await reactionsGroupRepository.DoesExistAsync(x))
-      .WithMessage("This group does not exist.");
 
     RuleFor(r => r.Content)
       .SetValidator(imageContentValidator);

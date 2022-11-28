@@ -17,7 +17,7 @@ public class DbReactionMapper : IDbReactionMapper
     _httpContextAccessor = httpContextAccessor;
   }
 
-  public DbReaction Map(CreateReactionRequest request, Guid imageId)
+  public DbReaction Map(CreateSingleReactionRequest request, Guid imageId)
   {
     return request is null
       ? null
@@ -27,6 +27,22 @@ public class DbReactionMapper : IDbReactionMapper
         Name = request.Name,
         Unicode = request.Unicode,
         ReactionsGroupId = request.ReactionsGroupId,
+        ImageId = imageId,
+        IsActive = true,
+        CreatedBy = _httpContextAccessor.HttpContext.GetUserId(),
+        CreatedAtUtc = DateTime.UtcNow
+      };
+  }
+
+  public DbReaction Map(CreateReactionRequest request, Guid imageId)
+  {
+    return request is null
+      ? null
+      : new DbReaction
+      {
+        Id = Guid.NewGuid(),
+        Name = request.Name,
+        Unicode = request.Unicode,
         ImageId = imageId,
         IsActive = true,
         CreatedBy = _httpContextAccessor.HttpContext.GetUserId(),
